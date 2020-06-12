@@ -1,11 +1,24 @@
+inThisBuild(
+  List(
+    organization := "com.thesamet",
+    homepage := Some(url("https://github.com/thesamet/sbt-protoc-gen-project")),
+    licenses := List(
+      "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")
+    ),
+    developers := List(
+      Developer(
+        "thesamet",
+        "Nadav Samet",
+        "thesamet@gmail.com",
+        url("https://www.thesamet.com")
+      )
+    )
+  )
+)
+
 name := """sbt-protoc-gen-project"""
-organization := "com.thesamet"
-version := "0.0.1-SNAPSHOT"
 
 sbtPlugin := true
-
-bintrayPackageLabels := Seq("sbt", "plugin")
-bintrayVcsUrl := Some("""git@github.com:thesamet/sbt-protoc-gen-project.git""")
 
 initialCommands in console := """import sbtprotocgenproject._"""
 
