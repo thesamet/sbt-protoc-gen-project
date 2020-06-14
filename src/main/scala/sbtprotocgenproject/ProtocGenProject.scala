@@ -14,6 +14,8 @@ import sbt.CompositeProject
 import sbtprotoc.ProtocPlugin.autoImport.PB
 import sbt.io.syntax._
 import sbt.Def
+import sbtassembly.PathList
+import sbtassembly.MergeStrategy
 
 final case class ProtocGenProject private (
     projName: String,
@@ -33,6 +35,12 @@ final case class ProtocGenProject private (
                 .defaultUniversalScript(shebang = shebang)
             )
           ),
+          // Remove when Message[T] disappears in ScalaPB 0.11.x
+          assemblyMergeStrategy in assembly := {
+            case PathList("scalapb", "package.class")  => MergeStrategy.discard
+            case PathList("scalapb", "package$.class") => MergeStrategy.discard
+            case x                                     => (assemblyMergeStrategy in assembly).value(x)
+          },
           skip in publish := true
         ) ++ commonSettings): _*
       )
