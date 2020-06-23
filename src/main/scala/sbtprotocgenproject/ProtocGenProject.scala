@@ -89,10 +89,6 @@ final case class ProtocGenProject private (
       (jarProject / assembly / target).value / s"$projName-$osName-assembly-" + version.value + ".jar"
     )
   )
-
-  /** Add this setting in your e2e project so the plugin gets assembled prior to invoking it. */
-  def addDependency =
-    Compile / PB.generate := ((Compile / PB.generate) dependsOn (jarProject / Compile / assembly)).value
 }
 
 object ProtocGenProject {

@@ -17,11 +17,11 @@ lazy val protocGenTest = protocGenProject(
 
 lazy val e2e = project
     .in(file("e2e"))
+    .enablePlugins(MagicGenPlugin)
     .settings(
         skip in publish := true,
-        protocGenTest.addDependency,
+        codeGenClassPath in Compile := (codeGen / Compile / fullClasspath).value,
         PB.targets in Compile := Seq(
-            (protocGenTest.plugin.value, Seq()) -> (Compile / sourceManaged).value
-        ),
-        Compile / PB.recompile := true,
+            magicGen("foo", "example.CodeGenerator$") -> (Compile / sourceManaged).value
+        )
     )

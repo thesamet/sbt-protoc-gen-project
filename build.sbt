@@ -24,7 +24,7 @@ initialCommands in console := """import sbtprotocgenproject._"""
 
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.10")
 
-addSbtPlugin("com.thesamet" % "sbt-protoc" % "0.99.32")
+addSbtPlugin("com.thesamet" % "sbt-protoc" % "0.99.34")
 
 enablePlugins(ScriptedPlugin)
 // set up 'scripted; sbt plugin for testing sbt plugins
