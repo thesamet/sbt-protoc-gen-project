@@ -4,23 +4,19 @@ import sbt._
 import sbt.Keys._
 import sbt.plugins.JvmPlugin
 import sbtprotoc.ProtocPlugin
-import protocbridge.{SandboxedJvmGenerator, Target}
+import protocbridge.SandboxedJvmGenerator
 import ProtocPlugin.autoImport.PB
-import sbt.internal.inc.classpath.ClasspathUtilities
 import scala.reflect.runtime.universe
-import scala.tools.reflect.ToolBox
-import collection.mutable.ListBuffer
-import sbt.util.FileInfo.full
-import scala.tools.nsc.util.ClassPath
 import protocbridge.ProtocCodeGenerator
 
-object MagicGenPlugin extends AutoPlugin {
+/** Lets you use code generators from local subprojects */
+object LocalCodeGenPlugin extends AutoPlugin {
 
   override def trigger = NoTrigger
   override def requires = JvmPlugin && ProtocPlugin
 
-  private val MagicArtifact =
-    protocbridge.Artifact("MagicGroup", "MagicArgifact", "MagicVersion")
+  private val DummyArtifact =
+    protocbridge.Artifact("DummyGroup", "DummyArtifact", "DummyVersion")
 
   object autoImport {
     def protocGenProject(
@@ -28,25 +24,25 @@ object MagicGenPlugin extends AutoPlugin {
         codeGen: ProjectReference
     ): ProtocGenProject = ProtocGenProject(projName, codeGen)
 
-    def magicGen(name: String, mainClass: String): SandboxedJvmGenerator =
+    def genModule(mainClass: String): SandboxedJvmGenerator =
       SandboxedJvmGenerator.forModule(
-        name,
-        MagicArtifact,
+        "codegen",
+        DummyArtifact,
         mainClass,
         Nil
       )
 
-    val codeGenClassPath = taskKey[Classpath]("code-gen-classpath")
+    val codeGenClasspath = taskKey[Classpath]("code-gen-classpath")
   }
 
   import autoImport._
 
   private def mkArtifactResolver = Def.task {
     val oldResolver = (Compile / PB.artifactResolver).value
-    val cp = (Compile / codeGenClassPath).value.map(_.data)
+    val cp = (Compile / codeGenClasspath).value.map(_.data)
     (a: protocbridge.Artifact) =>
       a match {
-        case MagicArtifact => cp
+        case DummyArtifact => cp
         case other         => oldResolver(other)
       }
   }
