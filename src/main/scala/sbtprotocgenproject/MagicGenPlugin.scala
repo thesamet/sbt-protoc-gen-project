@@ -19,7 +19,8 @@ object MagicGenPlugin extends AutoPlugin {
   override def trigger = NoTrigger
   override def requires = JvmPlugin && ProtocPlugin
 
-  private val MagicArtifact = protocbridge.Artifact("MagicGroup", "MagicArgifact", "MagicVersion")
+  private val MagicArtifact =
+    protocbridge.Artifact("MagicGroup", "MagicArgifact", "MagicVersion")
 
   object autoImport {
     def protocGenProject(
@@ -41,13 +42,14 @@ object MagicGenPlugin extends AutoPlugin {
   import autoImport._
 
   private def mkArtifactResolver = Def.task {
-      val oldResolver = (Compile / PB.artifactResolver).value
-      val cp = (Compile / codeGenClassPath).value.map(_.data)
-      (a: protocbridge.Artifact) => a match {
+    val oldResolver = (Compile / PB.artifactResolver).value
+    val cp = (Compile / codeGenClassPath).value.map(_.data)
+    (a: protocbridge.Artifact) =>
+      a match {
         case MagicArtifact => cp
-        case other => oldResolver(other)
+        case other         => oldResolver(other)
       }
-    }
+  }
 
   override def projectSettings: Seq[Def.Setting[_]] = List(
     Compile / PB.cacheClassLoaders := false,
