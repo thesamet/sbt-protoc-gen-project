@@ -1,0 +1,4 @@
+> +e2e/compile
+$ exists e2e/target/scala-2.13/src_managed/main/Result.scala
+$ exists e2e/target/scala-2.12/src_managed/main/Result.scala
+> e2e/run
