@@ -24,7 +24,7 @@ final case class ProtocGenProject private (
 ) extends CompositeProject {
   def projDef(name: String, shebang: Boolean) =
     sbt
-      .Project(name, new File(name))
+      .Project(name, new File("." + name))
       .enablePlugins(AssemblyPlugin)
       .dependsOn(codeGen)
       .settings(
@@ -51,7 +51,7 @@ final case class ProtocGenProject private (
 
   def agg =
     sbt
-      .Project(projName, new File(projName))
+      .Project(projName, new File("." + projName))
       .settings(
         name := projName,
         publishArtifact in (Compile, packageDoc) := false,
