@@ -13,17 +13,15 @@ object CodeGenerator extends CodeGenApp {
 
     CodeGenResponse.succeed(
       Seq(
-        File
-          .newBuilder
+        File.newBuilder
           .setName("Result.scala")
-          .setContent(
-            s"""package output
+          .setContent(s"""package output
                |object Result {
                |  val messages = Seq(${messages.mkString(", ")})
                |}
                """.stripMargin)
           .build
-        )
       )
+    )
   }
 }
