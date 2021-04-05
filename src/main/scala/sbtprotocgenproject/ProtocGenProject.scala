@@ -39,6 +39,13 @@ final case class ProtocGenProject private (
           assemblyMergeStrategy in assembly := {
             case PathList("scalapb", "package.class")  => MergeStrategy.discard
             case PathList("scalapb", "package$.class") => MergeStrategy.discard
+            // Workaround for https://github.com/scala/a-collection-compat/issues/426
+            case PathList(
+                  "scala",
+                  "annotation",
+                  "nowarn.class" | "nowarn$.class"
+                ) =>
+              MergeStrategy.first
             // compilerplugin and runtime ship with the Java generated Scalapb.proto
             case PathList("scalapb", "options", _*) => MergeStrategy.first
             case x                                  => (assemblyMergeStrategy in assembly).value(x)
