@@ -22,7 +22,7 @@ sbtPlugin := true
 
 initialCommands in console := """import sbtprotocgenproject._"""
 
-addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.15.0")
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "1.1.0")
 
 addSbtPlugin("com.thesamet" % "sbt-protoc" % "1.0.2")
 
