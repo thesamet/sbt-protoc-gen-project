@@ -48,7 +48,7 @@ final case class ProtocGenProject private (
               MergeStrategy.first
             // compilerplugin and runtime ship with the Java generated Scalapb.proto
             case PathList("scalapb", "options", _*) => MergeStrategy.first
-            case x                                  => (assemblyMergeStrategy in assembly).value(x)
+            case x => (assemblyMergeStrategy in assembly).value(x)
           },
           skip in publish := true
         ) ++ commonSettings): _*
