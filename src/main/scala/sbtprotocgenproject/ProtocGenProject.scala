@@ -20,7 +20,8 @@ import sbtassembly.MergeStrategy
 final case class ProtocGenProject private (
     projName: String,
     codeGen: ProjectReference,
-    commonSettings: Seq[Def.SettingsDefinition]
+    commonSettings: Seq[Def.SettingsDefinition],
+    aggSettings: Seq[Def.SettingsDefinition]
 ) extends CompositeProject {
   def projDef(name: String, shebang: Boolean) =
     sbt
@@ -62,19 +63,21 @@ final case class ProtocGenProject private (
     sbt
       .Project(projName, new File("." + projName))
       .settings(
-        name := projName,
-        publishArtifact in (Compile, packageDoc) := false,
-        publishArtifact in (Compile, packageSrc) := false,
-        crossPaths := false,
-        addArtifact(
-          Artifact(projName, "jar", "sh", "unix"),
-          assembly in (unix, Compile)
-        ),
-        addArtifact(
-          Artifact(projName, "jar", "bat", "windows"),
-          assembly in (windows, Compile)
-        ),
-        autoScalaLibrary := false
+        (Seq(
+          name := projName,
+          publishArtifact in (Compile, packageDoc) := false,
+          publishArtifact in (Compile, packageSrc) := false,
+          crossPaths := false,
+          addArtifact(
+            Artifact(projName, "jar", "sh", "unix"),
+            assembly in (unix, Compile)
+          ),
+          addArtifact(
+            Artifact(projName, "jar", "bat", "windows"),
+            assembly in (windows, Compile)
+          ),
+          autoScalaLibrary := false
+        ) ++ aggSettings): _*
       )
 
   override def componentProjects: Seq[Project] = Seq(unix, windows, agg)
@@ -85,9 +88,15 @@ final case class ProtocGenProject private (
 
   private val osName: String = if (isWindows) "windows" else "unix"
 
-  /* Add custom settings to both windows and unix projects */
+  /* Adds custom settings to both windows and unix projects */
   def settings(moreSettings: Def.SettingsDefinition*): ProtocGenProject =
     copy(commonSettings = commonSettings ++ moreSettings)
+
+  /* Adds custom settings to the aggregated project */
+  def aggregateProjectSettings(
+      moreSettings: Def.SettingsDefinition*
+  ): ProtocGenProject =
+    copy(aggSettings = aggSettings ++ moreSettings)
 
   /* Use this in PB.targets to depend on this plugin, required incorporating the addDependency setting in
      the callin project
@@ -104,5 +113,5 @@ object ProtocGenProject {
   def apply(
       projName: String,
       codeGen: ProjectReference
-  ): ProtocGenProject = new ProtocGenProject(projName, codeGen, Nil)
+  ): ProtocGenProject = new ProtocGenProject(projName, codeGen, Nil, Nil)
 }
