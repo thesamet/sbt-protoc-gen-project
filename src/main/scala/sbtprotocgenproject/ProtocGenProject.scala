@@ -30,14 +30,13 @@ final case class ProtocGenProject private (
       .dependsOn(codeGen)
       .settings(
         (Seq(
-          assemblyOption in assembly := (assemblyOption in assembly).value.copy(
-            prependShellScript = Some(
+          assembly / assemblyOption := (assembly / assemblyOption).value
+            .withPrependShellScript(
               sbtassembly.AssemblyPlugin
                 .defaultUniversalScript(shebang = shebang)
-            )
-          ),
+            ),
           // Remove when Message[T] disappears in ScalaPB 0.11.x
-          assemblyMergeStrategy in assembly := {
+          assembly / assemblyMergeStrategy := {
             case PathList("scalapb", "package.class")  => MergeStrategy.discard
             case PathList("scalapb", "package$.class") => MergeStrategy.discard
             // Workaround for https://github.com/scala/a-collection-compat/issues/426
@@ -49,9 +48,9 @@ final case class ProtocGenProject private (
               MergeStrategy.first
             // compilerplugin and runtime ship with the Java generated Scalapb.proto
             case PathList("scalapb", "options", _*) => MergeStrategy.first
-            case x                                  => (assemblyMergeStrategy in assembly).value(x)
+            case x => (assembly / assemblyMergeStrategy).value(x)
           },
-          skip in publish := true
+          publish / skip := true
         ) ++ commonSettings): _*
       )
 
@@ -65,16 +64,16 @@ final case class ProtocGenProject private (
       .settings(
         (Seq(
           name := projName,
-          publishArtifact in (Compile, packageDoc) := false,
-          publishArtifact in (Compile, packageSrc) := false,
+          Compile / packageDoc / publishArtifact := false,
+          Compile / packageSrc / publishArtifact := false,
           crossPaths := false,
           addArtifact(
             Artifact(projName, "jar", "sh", "unix"),
-            assembly in (unix, Compile)
+            unix / Compile / assembly
           ),
           addArtifact(
             Artifact(projName, "jar", "bat", "windows"),
-            assembly in (windows, Compile)
+            windows / Compile / assembly
           ),
           autoScalaLibrary := false
         ) ++ aggSettings): _*

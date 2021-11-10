@@ -48,7 +48,7 @@ object LocalCodeGenPlugin extends AutoPlugin {
   }
 
   override def projectSettings: Seq[Def.Setting[_]] = List(
-    Compile / PB.cacheClassLoaders := false,
+    Compile / PB.cacheArtifactResolution := false,
     Compile / PB.recompile := true,
     Compile / PB.artifactResolver := mkArtifactResolver.value
   )

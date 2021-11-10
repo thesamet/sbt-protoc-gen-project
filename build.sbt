@@ -20,7 +20,7 @@ name := """sbt-protoc-gen-project"""
 
 sbtPlugin := true
 
-initialCommands in console := """import sbtprotocgenproject._"""
+console / initialCommands := """import sbtprotocgenproject._"""
 
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "1.1.0")
 
