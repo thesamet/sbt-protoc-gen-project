@@ -1,12 +1,12 @@
 package sbtprotocgenproject
 
-import sbt._
+import sbt.{given, *}
 import sbt.Keys._
+import sbtcompat.PluginCompat._
 import sbt.plugins.JvmPlugin
 import sbtprotoc.ProtocPlugin
 import protocbridge.SandboxedJvmGenerator
 import ProtocPlugin.autoImport.PB
-import scala.reflect.runtime.universe
 import protocbridge.ProtocCodeGenerator
 
 /** Lets you use code generators from local subprojects */
@@ -39,17 +39,19 @@ object LocalCodeGenPlugin extends AutoPlugin {
 
   private def mkArtifactResolver = Def.task {
     val oldResolver = (Compile / PB.artifactResolver).value
-    val cp = (Compile / codeGenClasspath).value.map(_.data)
-    (a: protocbridge.Artifact) =>
+    implicit val converter: xsbti.FileConverter = fileConverter.value
+    val cp = toFiles((Compile / codeGenClasspath).value)
+    Def.uncached { (a: protocbridge.Artifact) =>
       a match {
         case DummyArtifact => cp
         case other         => oldResolver(other)
       }
+    }
   }
 
-  override def projectSettings: Seq[Def.Setting[_]] = List(
+  override def projectSettings: Seq[Def.Setting[?]] = List(
     Compile / PB.cacheArtifactResolution := false,
     Compile / PB.recompile := true,
-    Compile / PB.artifactResolver := mkArtifactResolver.value
+    Compile / PB.artifactResolver := Def.uncached(mkArtifactResolver.value)
   )
 }

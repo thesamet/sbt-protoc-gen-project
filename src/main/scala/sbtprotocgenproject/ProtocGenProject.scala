@@ -1,5 +1,7 @@
 package sbtprotocgenproject
 
+import sbt.{given, *}
+
 import sbtassembly.AssemblyPlugin
 import sbtassembly.AssemblyKeys._
 import sbt.Keys._
@@ -30,6 +32,7 @@ final case class ProtocGenProject private (
       .dependsOn(codeGen)
       .settings(
         (Seq(
+          scalaVersion := (codeGen / scalaVersion).value,
           assembly / assemblyOption := (assembly / assemblyOption).value
             .withPrependShellScript(
               sbtassembly.AssemblyPlugin
@@ -51,7 +54,7 @@ final case class ProtocGenProject private (
             case x => (assembly / assemblyMergeStrategy).value(x)
           },
           publish / skip := true
-        ) ++ commonSettings): _*
+        ) ++ commonSettings)*
       )
 
   def unix = projDef(s"$projName-unix", shebang = true)
@@ -76,7 +79,7 @@ final case class ProtocGenProject private (
             windows / Compile / assembly
           ),
           autoScalaLibrary := false
-        ) ++ aggSettings): _*
+        ) ++ aggSettings)*
       )
 
   override def componentProjects: Seq[Project] = Seq(unix, windows, agg)
@@ -103,7 +106,10 @@ final case class ProtocGenProject private (
   def plugin = Def.setting(
     PB.gens.plugin(
       "assembled",
-      (jarProject / assembly / target).value / s"$projName-$osName-assembly-" + version.value + ".jar"
+      new File(
+        (jarProject / assembly / target).value,
+        s"$projName-$osName-assembly-${version.value}.jar"
+      ).getAbsolutePath
     )
   )
 }

@@ -1,5 +1,5 @@
-version := "0.1"
-scalaVersion := "2.12.1"
+ThisBuild / version := "0.1"
+ThisBuild / scalaVersion := (if (sbtVersion.value.startsWith("2.")) "2.13.18" else "2.12.21")
 
 lazy val codeGen = project
   .in(file("codegen"))
@@ -14,16 +14,16 @@ lazy val protocGenTest = protocGenProject(
   "protoc-gen-test",
   codeGen
 ).settings(
-  mainClass in Compile := Option("example.CodeGenerator")
+  Compile / mainClass := Option("example.CodeGenerator")
 )
 
 lazy val e2e = project
   .in(file("e2e"))
   .enablePlugins(LocalCodeGenPlugin)
   .settings(
-    skip in publish := true,
-    codeGenClasspath in Compile := (codeGen / Compile / fullClasspath).value,
-    PB.targets in Compile := Seq(
+    publish / skip := true,
+    Compile / codeGenClasspath := (codeGen / Compile / fullClasspath).value,
+    Compile / PB.targets := Seq(
       genModule("example.CodeGenerator$") -> (Compile / sourceManaged).value
     )
   )

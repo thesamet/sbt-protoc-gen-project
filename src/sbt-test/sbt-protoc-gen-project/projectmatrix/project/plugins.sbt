@@ -9,4 +9,6 @@
     addSbtPlugin("com.thesamet" % """sbt-protoc-gen-project""" % pluginVersion)
 }
 
-addSbtPlugin("com.eed3si9n" % "sbt-projectmatrix" % "0.5.2")
+libraryDependencies ++= (if (sbtVersion.value.startsWith("1."))
+  Seq(Defaults.sbtPluginExtra("com.eed3si9n" % "sbt-projectmatrix" % "0.11.0", sbtBinaryVersion.value, scalaBinaryVersion.value))
+else Nil)

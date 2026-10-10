@@ -1,4 +1,4 @@
-version := "0.1"
+ThisBuild / version := "0.1"
 
 lazy val codeGen = projectMatrix
   .in(file("codegen"))
@@ -8,26 +8,28 @@ lazy val codeGen = projectMatrix
       "com.thesamet.scalapb" %% "compilerplugin" % "0.10.4"
     )
   )
-  .jvmPlatform(scalaVersions = Seq("2.13.2", "2.12.10"))
+  .jvmPlatform(scalaVersions = Seq("2.13.18", "2.12.21"))
 
-lazy val codeGen12 = codeGen.jvm("2.12.10")
+lazy val codeGenForSbt = codeGen.jvm(
+  if (scala.util.Properties.versionNumberString.startsWith("2.12.")) "2.12.21" else "2.13.18"
+)
 
 lazy val protocGenTest = protocGenProject(
   "protoc-gen-test",
-  codeGen12
+  codeGenForSbt
 ).settings(
-  mainClass in Compile := Option("example.CodeGenerator")
+  Compile / mainClass := Option("example.CodeGenerator")
 )
 
 lazy val e2e = project
   .in(file("e2e"))
   .enablePlugins(LocalCodeGenPlugin)
   .settings(
-    skip in publish := true,
-    crossScalaVersions := Seq("2.13.2", "2.12.10"),
-    scalaVersion := "2.13.2",
-    codeGenClasspath in Compile := (codeGen12 / Compile / fullClasspath).value,
-    PB.targets in Compile := Seq(
+    publish / skip := true,
+    crossScalaVersions := Seq("2.13.18", "2.12.21"),
+    scalaVersion := "2.13.18",
+    Compile / codeGenClasspath := (codeGenForSbt / Compile / fullClasspath).value,
+    Compile / PB.targets := Seq(
       genModule("example.CodeGenerator$") -> (Compile / sourceManaged).value
     )
   )

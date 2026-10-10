@@ -1,24 +1,21 @@
 # sbt-protoc-gen-project
 
-An sbt AutoPlugin
+An sbt AutoPlugin for testing local protoc generators and publishing executable generator JARs.
 
-## Usage
+## Compatibility
 
-This plugin requires sbt 1.0.0+
+The plugin is cross-published for sbt 1.x and sbt 2.x. Building the plugin requires JDK 17.
 
-### Testing
+`LocalCodeGenPlugin` uses sbt-protoc's sandbox, which shares sbt's Scala standard library.
+Compile the generator project with Scala 2.12 when running sbt 1, and Scala 2.13 (or Scala 3)
+when running sbt 2. The project consuming generated sources can use a different Scala version.
 
-Run `test` for regular unit tests.
+## Testing
 
-Run `scripted` for [sbt script tests](http://www.scala-sbt.org/1.x/docs/Testing-sbt-plugins.html).
+Run `sbt +scripted` to test code generation and executable JAR packaging with both sbt versions.
+Run `sbt scalafmtCheckAll scalafmtSbtCheck` to check formatting.
 
-### Publishing
+## Publishing
 
-1. publish your source to GitHub
-2. [create a bintray account](https://bintray.com/signup/index) and [set up bintray credentials](https://github.com/sbt/sbt-bintray#publishing)
-3. create a bintray repository `sbt-plugins` 
-4. update your bintray publishing settings in `build.sbt`
-5. `sbt publish`
-6. [request inclusion in sbt-plugin-releases](https://bintray.com/sbt/sbt-plugin-releases)
-7. [Add your plugin to the community plugins list](https://github.com/sbt/website#attention-plugin-authors)
-8. [Claim your project an Scaladex](https://github.com/scalacenter/scaladex-contrib#claim-your-project)
+The release workflow uses sbt-ci-release to publish both plugin variants from version tags.
+Use `sbt +publishLocal` for local integration testing before a release.
