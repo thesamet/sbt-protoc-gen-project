@@ -31,8 +31,8 @@ enablePlugins(ScriptedPlugin)
 scriptedLaunchOpts ++=
   Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
 
-ThisBuild / crossScalaVersions := Seq("2.12.21", "3.8.4")
-ThisBuild / scalaVersion := "2.12.21"
+ThisBuild / crossScalaVersions := Seq("3.8.4", "2.12.21")
+ThisBuild / scalaVersion := "3.8.4"
 pluginCrossBuild / sbtVersion := {
   if (scalaBinaryVersion.value == "3") "2.0.10" else "1.13.0"
 }

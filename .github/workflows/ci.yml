@@ -18,7 +18,7 @@ jobs:
 
     - name: Formatting
       run: |
-        sbt scalafmtCheckAll scalafmtSbtCheck
+        sbt ";scalafmtCheckAll;scalafmtSbtCheck"
 
     - name: Compile and test
       run: |

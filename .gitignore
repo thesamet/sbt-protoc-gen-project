@@ -10,5 +10,8 @@ project/target
 .settings
 bin
 .bloop
+.bsp/
+.direnv/
 .metals
 metals.sbt  
+metals.sbt.disabled
